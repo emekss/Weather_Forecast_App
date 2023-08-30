@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'additonal_info_row.dart';
 import 'weather_forecast_row.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class WeatherScreen extends StatefulWidget {
   const WeatherScreen({super.key});
@@ -13,6 +14,8 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
+  late Future<Map<String, dynamic>> weather;
+
   Future<Map<String, dynamic>>? getCurrentWeather() async {
     try {
       String cityName = 'London';
@@ -32,7 +35,15 @@ class _WeatherScreenState extends State<WeatherScreen> {
     } catch (e) {
       throw e.toString();
     }
-  } // Weather API
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    weather = getCurrentWeather()!;
+  }
+
+  // Weather API
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +56,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                weather = getCurrentWeather()!;
+              });
+            },
             icon: const Icon(Icons.refresh),
           ),
         ],
       ),
       body: FutureBuilder(
-        future: getCurrentWeather(),
+        future: weather,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
@@ -135,43 +150,27 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (int i = 0; i < 5; i++)
-                        WeatherForecastRow(
-                          time: data['list'][i + 1]['dt'].toString(),
-                          temperature:
-                              data['list'][i + 1]['main']['temp'].toString(),
-                          icon: data['list'][i + 1]['weather'][0]['main'] ==
-                                      'Clouds' ||
-                                  data['list'][i + 1]['weather'][0]['main'] ==
-                                      'Rain'
-                              ? Icons.cloud
-                              : Icons.sunny,
-                        ),
-                      const WeatherForecastRow(
-                        time: '13:00',
-                        temperature: '321.22',
-                        icon: Icons.sunny,
-                      ),
-                      const WeatherForecastRow(
-                        time: '15:00',
-                        temperature: '319.12',
-                        icon: Icons.sunny,
-                      ),
-                      const WeatherForecastRow(
-                        time: '16:00',
-                        temperature: '306.33',
-                        icon: Icons.cloud,
-                      ),
-                      const WeatherForecastRow(
-                        time: '18:00',
-                        temperature: '361.33',
-                        icon: Icons.cloud,
-                      ),
-                    ],
+                SizedBox(
+                  height: 120,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      final weatherForecastRow = data['list'][index + 1];
+                      final cloudForecast =
+                          data['list'][index + 1]['weather'][0]['main'];
+                      final tempForecast =
+                          weatherForecastRow['main']['temp'].toString();
+                      final time = DateTime.parse(weatherForecastRow['dt_txt']);
+                      return WeatherForecastRow(
+                        time: DateFormat.j().format(time),
+                        temperature: tempForecast,
+                        icon:
+                            cloudForecast == 'Clouds' || cloudForecast == 'Rain'
+                                ? Icons.cloud
+                                : Icons.sunny,
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 10),

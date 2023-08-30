@@ -20,7 +20,7 @@ class AdditionalInfoRow extends StatelessWidget {
           size: 32,
         ),
         const SizedBox(height: 8),
-         Text(label),
+        Text(label),
         const SizedBox(height: 8),
         Text(
           value,
