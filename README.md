@@ -8,6 +8,7 @@ Welcome to the Weather Forecast App, a Flutter-based application that provides y
 - [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Dependencies]
 - [API Integration](#api-integration)
 - [Themes](#themes)
 - [Contributing](#contributing)
@@ -54,6 +55,11 @@ Once the app is installed and running, you can use it to:
 - Search for weather information in other cities by entering the city name or ZIP code.
 - Toggle between light mode and dark mode by accessing the app's settings.
 - Access a five-day weather forecast for any location.
+
+## Dependencies
+
+- [Weather API](https://www.weatherapi.com): This app uses the Weather API to fetch accurate and real-time weather data. 
+You'll need to sign up for an API key and replace it in the designated code file.
 
 ## API Integration
 
